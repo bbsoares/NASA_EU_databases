@@ -16,7 +16,29 @@ import pprint
 download_link = 'https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets'
 
 # to get the directory where NASA Archive data will be stored
-from config import get_data_dir
+def _create_data_dir():
+    """ Create empty directory where NASA.tsv will be stored """
+    home = os.path.expanduser("~")
+    directory = os.path.join(home, '.nasaarchive')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+
+def _check_data_dir():
+    home = os.path.expanduser("~")
+    directory = os.path.join(home, '.nasaarchive')
+    return os.path.exists(directory)
+
+
+def get_data_dir():
+    """ Return directory where NASA.tsv is stored """
+    if not _check_data_dir():
+        _create_data_dir()
+        
+    home = os.path.expanduser("~")
+    return os.path.join(home, '.nasaarchive')
+
+#########
 
 def download_data():
     """ Download NASA Archive data and save it to `NASA.tsv` """
@@ -155,9 +177,30 @@ def read_data():
         # split the columns
         vals = line.strip().split(',')
         # make some columns into ints
-        vals = vals[:4] + list(map(val2int, vals[4:]))
+        vals = vals[:4] + list(map(val2int, vals[4:6])) + list(map(val2int, vals[9:11])) \
+        + list(map(val2int, vals[14:16])) + list(map(val2int, vals[19:21])) \
+        + list(map(val2int, vals[24:26])) + list(map(val2int, vals[29:32])) \
+        + list(map(val2int, vals[35:37])) + list(map(val2int, vals[40:47])) \
+        + list(map(val2int, vals[51])) + list(map(val2int, vals[55:57])) \
+        + list(map(val2int, vals[59:61])) + list(map(val2int, vals[63])) \
+        + list(map(val2int, vals[67:69])) + list(map(val2int, vals[72:74])) \
+        + list(map(val2int, vals[77:]))
+        
         # make some columns into floats
-        vals[4:-4] = list(map(val2float, vals[4:-4]))
+        vals[6:9] = list(map(val2float, vals[6:9]))
+        vals[11:14] = list(map(val2float, vals[11:14]))
+        vals[16:19] = list(map(val2float, vals[16:19]))
+        vals[21:24] = list(map(val2float, vals[21:24]))
+        vals[26:29] = list(map(val2float, vals[26:29]))
+        vals[32:35] = list(map(val2float, vals[32:35]))
+        vals[37:40] = list(map(val2float, vals[37:40]))
+        vals[47:51] = list(map(val2float, vals[47:51]))
+        vals[52:55] = list(map(val2float, vals[52:55]))
+        vals[57:59] = list(map(val2float, vals[57:59]))
+        vals[61:63] = list(map(val2float, vals[61:63]))
+        vals[64:67] = list(map(val2float, vals[64:67]))
+        vals[69:72] = list(map(val2float, vals[69:72]))
+        vals[74:77] = list(map(val2float, vals[74:77]))
 
         for i, v in enumerate(data.values()):
             v.append(vals[i])
@@ -186,6 +229,3 @@ def get_data():
 
 if __name__ == '__main__':
     data = get_data()
-    
-    
-# ttt = pd.DataFrame.from_csv('C:\\Users\\Barbara\\.nasaarchive\\NASA.tsv', sep=',', header=0)
