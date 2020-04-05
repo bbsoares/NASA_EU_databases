@@ -114,10 +114,9 @@ def match(sc_name):
     
     RAsc, DECsc = coor_sc2deg(sc_name)
     
-    # The coordinates on  EU database are strings --> convert to float
+    # The coordinates on EU database are strings --> convert to float
     ra=[]
     dec=[]
-    
     results=[]
     
     for i in eu['ra']:
@@ -125,29 +124,88 @@ def match(sc_name):
     for j in eu['dec']:
         dec.append(float(j))
     
-    
     for exo in [na,eu]:
         # If we are checking the EU database, we need to use the float values and not the string ones
         if len(exo)==len(eu):
             exo['ra']=np.array(ra)
             exo['dec']=np.array(dec)
-        # Compare values. It's a match if the difference between them is less than 0.0005
-        ind, = np.where((abs(RAsc-exo['ra'])<0.0005) & ((abs(DECsc-exo['dec']))<0.0005))
+            
+        # Compare values. It's a match if the difference between them is less than 0.0900
+        ind, = np.where((abs(RAsc-exo['ra'])<0.0900) & ((abs(DECsc-exo['dec']))<0.0900))
 
-#        print(ind)
         # Which database are we checking?
         if len(exo)==len(na):
             if len(ind)==0:
                 print('No match found')
             else:
-                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matches: \n')
+                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
         
         if len(exo)==len(eu):
             if len(ind)==0:
                 print('No match found')
             else:
-                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matches: \n')
+                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
         results.append(ind)
         for e in ind:
             print(exo.iloc[e],'\n')
-    return 'NASA index matches: '+str(results[0])+'  EU index matches: '+str(results[1])
+    return 'NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])
+
+
+#----------------------------------------------------------------------------------------------------------
+
+def match2(sc_name):
+    ''' Given the SWEETCat name of a star, uses the
+    database column and returns all related information
+    from the respective database of the star and its planets. '''
+    
+    RAsc, DECsc = coor_sc2deg(sc_name)
+    
+    # The coordinates on EU database are strings --> convert to float
+    ra=[]
+    dec=[]
+    results=[]
+    
+    for i in eu['ra']:
+        ra.append(float(i))
+    for j in eu['dec']:
+        dec.append(float(j))
+    
+    indx, = np.where(sc['name']==sc_name)[0]
+#    print(indx)
+    db = sc['database'][indx]
+#    print(str(db))
+    if db=='EU':
+        RA=np.array(ra)
+        DEC=np.array(dec)
+        ind, = np.where((abs(RAsc-RA)<0.09) & ((abs(DECsc-DEC))<0.09))
+        print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
+        for h in ind:
+            print(eu.iloc[h],'\n')
+        
+    
+    if db=='EU,NASA':
+        for exo in [na,eu]:
+            # If we are checking the EU database, we need to use the float values and not the string ones
+            if len(exo)==len(eu):
+                exo['ra']=np.array(ra)
+                exo['dec']=np.array(dec)
+            
+            # Compare values. It's a match if the difference between them is less than 0.0005
+            ind, = np.where((abs(RAsc-exo['ra'])<0.0005) & ((abs(DECsc-exo['dec']))<0.0005))
+    
+            # Which database are we checking?
+            if len(exo)==len(na):
+                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
+            
+            if len(exo)==len(eu):
+                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
+            
+            results.append(ind)
+            for e in ind:
+                print(exo.iloc[e],'\n')
+                
+    if db=='NASA':
+        ind, = np.where((abs(RAsc-na['ra'])<0.09) & ((abs(DECsc-na['dec']))<0.09))
+        print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
+        for h in ind:
+            print(eu.iloc[h],'\n')
