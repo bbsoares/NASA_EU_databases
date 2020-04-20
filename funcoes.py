@@ -4,7 +4,6 @@ Created on Tue Mar 24 00:12:44 2020
 
 @author: Barbara
 """
-
 import numpy as np
 import pandas as pd
 from nasa import get_data as ndata
@@ -104,13 +103,22 @@ def coor_sc2deg(star_name):
         
 ##############################################################################
     
-def match(sc_name, lim=0.09):
+def match(sc_name, lim=0.09*3600):
     ''' Given the SWEETCat name of a star, verifies if
     it already exists in the NASA and EU database.
     If so,  returns all related information. The checking
     is done for coordinates and with a certain limit. '''
     
-    RAsc, DECsc = coor_sc2deg(sc_name)
+    if len(sc[sc['name']==sc_name])==0:
+        raise SystemExit('This name does not exist in SWEETCat. Please write a star present in SWWETCat.')
+    else:
+        pass
+    
+    rasc, decsc = coor_sc2deg(sc_name)  # Coordinates are in degrees
+    
+    # Convert coordinates to arcseconds
+    RAsc=rasc*3600
+    DECsc=decsc*3600
     
     # The coordinates on EU database are strings --> convert to float
     ra=[]
@@ -129,41 +137,46 @@ def match(sc_name, lim=0.09):
             exo['ra']=np.array(ra)
             exo['dec']=np.array(dec)
             
-        # Compare values. It's a match if the difference between them is less than 0.0900
-        ind, = np.where((abs(RAsc-exo['ra'])<lim) & ((abs(DECsc-exo['dec']))<lim))
-
+        # Compare values. It's a match if the difference between them is less than 5 arcseconds.
+        # Coordinates are in degrees, multiply for 3600 to convert to arcseconds.
+        ind, = np.where((abs(RAsc-exo['ra']*3600)<lim) & ((abs(DECsc-exo['dec']*3600))<lim))
+        results.append(ind)
         # Which database are we checking?
         if len(exo)==len(na):
             if len(ind)==0:
                 print('No match found')
             else:
-                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
+#                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
+                NA = na.loc[list(ind)]
         
         if len(exo)==len(eu):
             if len(ind)==0:
                 print('No match found')
             else:
-                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
+#                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
+                EU = eu.loc[list(ind)]
         results.append(ind)
-        for e in ind:
-            print(exo.iloc[e],'\n')
-            param.append(exo.iloc[e])
-    return 'NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])
-
+    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
+        
+    return NA, EU
 
 #----------------------------------------------------------------------------------------------------------
 
-def match2(sc_name, lim= 0.09):
+def match2(sc_name, lim=0.09*3600):
     ''' Given the SWEETCat name of a star, uses the
     database column and returns all related information
     from the respective database of the star and its planets. '''
+    
+    if len(sc[sc['name']==sc_name])==0:
+        raise SystemExit('This name does not exist in SWEETCat. Please write a star present in SWWETCat.')
+    else:
+        pass
     
     RAsc, DECsc = coor_sc2deg(sc_name)
     
     # The coordinates on EU database are strings --> convert to float
     ra=[]
     dec=[]
-    results=[]
     
     for i in eu['ra']:
         ra.append(float(i))
@@ -171,48 +184,46 @@ def match2(sc_name, lim= 0.09):
         dec.append(float(j))
     
     indx, = np.where(sc['name']==sc_name)[0]
-#    print(indx)
     db = sc['database'][indx]
-#    print(str(db))
-    if db=='EU':
-        param = []
-        RA=np.array(ra)
-        DEC=np.array(dec)
-        ind, = np.where((abs(RAsc-RA)<lim) & ((abs(DECsc-DEC))<lim))
-        print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s).')
-        for h in ind:
-            param.append(eu.iloc[h])
-        
-    
-    if db=='EU,NASA':
-        param = []
-        for exo in [eu,na]:
-            # If we are checking the EU database, we need to use the float values and not the string ones
-            if len(exo)==len(eu):
-                exo['ra']=np.array(ra)
-                exo['dec']=np.array(dec)
-            
-            # Compare values. It's a match if the difference between them is less than lim
-            ind, = np.where((abs(RAsc-exo['ra'])<lim) & ((abs(DECsc-exo['dec']))<lim))
-    
-            # Which database are we checking?
-            if len(exo)==len(na):
-                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s).')
-            
-            if len(exo)==len(eu):
-                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s).')
-            
-            results.append(ind)
-            for e in ind:
-                param.append(exo.iloc[e])
-                
-    if db=='NASA':
-        param = []
-        ind, = np.where((abs(RAsc-na['ra'])<lim) & ((abs(DECsc-na['dec']))<lim))
-        print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s).')
-        for h in ind:
-            param.append(eu.iloc[h])
-    return param, '\n', db
+#    if db=='EU':
+#        param = []
+#        RA=np.array(ra)
+#        DEC=np.array(dec)
+#        ind, = np.where((abs(RAsc-RA)<lim) & ((abs(DECsc-DEC))<lim))
+#        print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s).')
+#        for h in ind:
+#            param.append(eu.iloc[h])
+#        
+#    
+#    if db=='EU,NASA':
+#        param = []
+#        for exo in [eu,na]:
+#            # If we are checking the EU database, we need to use the float values and not the string ones
+#            if len(exo)==len(eu):
+#                exo['ra']=np.array(ra)
+#                exo['dec']=np.array(dec)
+#            
+#            # Compare values. It's a match if the difference between them is less than lim
+#            ind, = np.where((abs(RAsc-exo['ra'])<lim) & ((abs(DECsc-exo['dec']))<lim))
+#    
+#            # Which database are we checking?
+#            if len(exo)==len(na):
+#                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s).')
+#            
+#            if len(exo)==len(eu):
+#                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s).')
+#            
+#            results.append(ind)
+#            for e in ind:
+#                param.append(exo.iloc[e])
+#                
+#    if db=='NASA':
+#        param = []
+#        ind, = np.where((abs(RAsc-na['ra'])<lim) & ((abs(DECsc-na['dec']))<lim))
+#        print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s).')
+#        for h in ind:
+#            param.append(eu.iloc[h])
+    return db
 
 #-----------------------------------------------------------------------
-print(sc['M'][3048], eu['mass'][4237], na['pl_bmassj'][4132])
+#print(sc['M'][3048], eu['mass'][4237], na['pl_bmassj'][4132])
