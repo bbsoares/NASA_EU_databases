@@ -192,3 +192,7 @@ def get_data():
 
 if __name__ == '__main__':
     data = get_data()
+    
+## ttt = pd.DataFrame.from_csv('C:\\Users\\Barbara\\.nasaarchive\\NASA.tsv', sep=',', header=0)
+# nasa = data
+# d = pd.DataFrame.from_dict(data)   

@@ -56,7 +56,11 @@ Created on Sat Apr 18 12:22:47 2020
 #       'X', 'pl_facility']
 
 #dictionary EU --> NASA
-dic = {'name':'pl_name','planet_status':'', 'radius':'pl_radj', 'radius_error_min':'pl_radjerr2', 
+dic = {'name':'pl_name','planet_status':'','mass':'pl_bmassj',
+       'mass_error_min':'pl_bmassjerr2','mass_error_max':'pl_bmassjerr1',
+       'mass_sini':'pl_bmsinj','mass_sini_error_min':'pl_bmsinjerr2',
+       'mass_sini_error_max':'pl_bmsinjerr1',
+       'radius':'pl_radj', 'radius_error_min':'pl_radjerr2', 
        'radius_error_max':'pl_radjerr1', 'orbital_period':'pl_orbper', 
        'orbital_period_error_min':'pl_orbpererr2', 'orbital_period_error_max':'pl_orbpererr1', 
        'semi_major_axis':'pl_orbsmax', 'semi_major_axis_error_min':'pl_orbsmaxerr2', 
@@ -64,7 +68,7 @@ dic = {'name':'pl_name','planet_status':'', 'radius':'pl_radj', 'radius_error_mi
        'eccentricity_error_min':'pl_orbeccenerr2', 'eccentricity_error_max':'pl_orbeccenerr1', 
        'inclination':'pl_orbincl', 'inclination_error_min':'pl_orbinclerr2', 
        'inclination_error_max':'pl_orbinclerr1', 'angular_distance':'', 'discovered':'', 
-       'updated':'rowupdate', 'omega':'', 'omega_error_min':'', #
+       'updated':'rowupdate', 'omega':'', 'omega_error_min':'', 
        'omega_error_max':'', 'tperi':'', 'tperi_error_min':'', 'tperi_error_max':'', 
        'tconj':'', 'tconj_error_min':'', 'tconj_error_max':'', 'tzero_tr':'', 'tzero_tr_error_min':'',
        'tzero_tr_error_max':'', 'tzero_tr_sec':'', 'tzero_tr_sec_error_min':'',

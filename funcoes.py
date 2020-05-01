@@ -6,8 +6,9 @@ Created on Tue Mar 24 00:12:44 2020
 """
 import numpy as np
 import pandas as pd
-from nasa import get_data as ndata
+from new_nasa import new_na
 from pyexoplaneteu import get_data as eudata
+from dictio import dic
 
 names_ = ['name', 'hd', 'ra', 'dec', 'V', 'Verr', 'p', 'perr',
                   'pflag', 'Teff', 'Tefferr', 'logg', 'logger',
@@ -15,7 +16,7 @@ names_ = ['name', 'hd', 'ra', 'dec', 'V', 'Verr', 'p', 'perr',
                   'author', 'link', 'source', 'update', 'comment', 'database',
                   'n3']
 
-na = pd.DataFrame.from_dict(ndata())
+na = new_na()
 eu = pd.DataFrame.from_dict(eudata())
 sc = pd.read_csv('WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb', sep='	', header=None, names=names_)
 #pd.read_rdb()
@@ -83,7 +84,7 @@ def coor2deg():
 
 def coor_sc2deg(star_name):
     ''' The user gives the name of the star as it is in the SWEETCat database.
-        Converts coordinates of the star to degrees '''
+        Converts coordinates of the star to degrees. '''
     
     # Coordinates of SWEETCat in hh:mm:ss
     ra_sc_ = (sc[(sc['name']==star_name)][['ra']]).values[0,0]
@@ -103,14 +104,21 @@ def coor_sc2deg(star_name):
         
 ##############################################################################
     
-def match(sc_name, lim=0.09*3600):
+def match(sc_name, lim=5, list_of_parameters=None):
     ''' Given the SWEETCat name of a star, verifies if
     it already exists in the NASA and EU database.
     If so,  returns all related information. The checking
-    is done for coordinates and with a certain limit. '''
+    is done for coordinates and with a certain limit.
+    
+    sc_name: star name as it is in SWEETCat
+    lim: limit used to compare coordinates, in arcsec
+    list_of_parameters: parameters of the planet(s) we want
+    to see. None by default shows all parameters. Parameters
+    be as in EU database. Run eu.columns to see options. '''
     
     if len(sc[sc['name']==sc_name])==0:
-        raise SystemExit('This name does not exist in SWEETCat. Please write a star present in SWWETCat.')
+#        raise SystemExit('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
+        raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
     else:
         pass
     
@@ -124,7 +132,6 @@ def match(sc_name, lim=0.09*3600):
     ra=[]
     dec=[]
     results=[]
-    param=[]
     
     for i in eu['ra']:
         ra.append(float(i))
@@ -141,21 +148,51 @@ def match(sc_name, lim=0.09*3600):
         # Coordinates are in degrees, multiply for 3600 to convert to arcseconds.
         ind, = np.where((abs(RAsc-exo['ra']*3600)<lim) & ((abs(DECsc-exo['dec']*3600))<lim))
         results.append(ind)
+        
         # Which database are we checking?
         if len(exo)==len(na):
-            if len(ind)==0:
-                print('No match found')
+            if len(ind)==0:  # No match for coordinates!
+                
+                # If coordinates don't work, try checking by name
+                inx, = np.where(na['pl_hostname']==sc_name)
+                if len(inx)==0:
+                    print('No match found')
+                    NA = na.loc[list(inx)]
+                    
+                else:
+                    print('Match by name.')
+                    if list_of_parameters==None:
+                        NA = na.loc[list(inx)]
+                    else:
+                        na_params=[dic.get(key) for key in list_of_parameters]
+                        NA = na.loc[list(inx),na_params]
+
+                    
             else:
-#                print('\n Star in both SWEETCat and NASA databases. Found',str(len(ind)),'matche(s): \n')
-                NA = na.loc[list(ind)]
+                if list_of_parameters==None:
+                    NA = na.loc[list(ind)]
+                else:
+                    na_params=[dic.get(key) for key in list_of_parameters]
+                    NA = na.loc[list(ind),na_params]
         
         if len(exo)==len(eu):
             if len(ind)==0:
-                print('No match found')
+                # If coordinates don't work, try checking by name
+                inx, = np.where(eu['star_name']==sc_name)
+                if len(inx)==0:
+                    print('No match found')
+                    EU = eu.loc[list(inx)]
+                else:
+                    print('Match by name.')
+                    if list_of_parameters==None:
+                        EU = eu.loc[list(inx)]
+                    else:
+                        EU = eu.loc[list(inx),list_of_parameters]
             else:
-#                print('\n Star in both SWEETCat and EU databases. Found',str(len(ind)),'matche(s): \n')
-                EU = eu.loc[list(ind)]
-        results.append(ind)
+                if list_of_parameters==None:
+                    EU = eu.loc[list(ind)]
+                else:
+                    EU = eu.loc[list(ind),list_of_parameters]
     print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
         
     return NA, EU
