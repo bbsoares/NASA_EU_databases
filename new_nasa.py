@@ -38,8 +38,8 @@ def new_na():
     na.at[indx,'pl_bmassjerr2']=zeros
     Msin_err2=list(msin)
     
-    na.insert(loc=29 ,column='pl_bmsinj', value=Msin)
-    na.insert(loc=30 ,column='pl_bmsinjerr1', value=Msin_err1)
-    na.insert(loc=31 ,column='pl_bmsinjerr2', value=Msin_err2)
+    na.insert(loc=29 ,column='pl_bmsinij', value=Msin)
+    na.insert(loc=30 ,column='pl_bmsinijerr1', value=Msin_err1)
+    na.insert(loc=31 ,column='pl_bmsinijerr2', value=Msin_err2)
     
     return na

@@ -116,6 +116,7 @@ def match(sc_name, lim=5, list_of_parameters=None):
     to see. None by default shows all parameters. Parameters
     be as in EU database. Run eu.columns to see options. '''
     
+    # Name is in SWWETCat?
     if len(sc[sc['name']==sc_name])==0:
 #        raise SystemExit('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
         raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
@@ -264,3 +265,19 @@ def match2(sc_name, lim=0.09*3600):
 
 #-----------------------------------------------------------------------
 #print(sc['M'][3048], eu['mass'][4237], na['pl_bmassj'][4132])
+    
+def get_sc(sc_name,list_of_parameters=None):
+    ''' Give name of the star and parameters as they are in SWEETCat.
+    Run sc.columns to see parameters avaiable. '''
+    
+    # Name is in SWWETCat?
+    if len(sc[sc['name']==sc_name])==0:
+        raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
+    else:
+        pass
+   
+    if list_of_parameters==None:
+        SC = sc[sc['name']==sc_name]
+    else:
+        SC = sc[sc['name']==sc_name][list_of_parameters]
+    return SC
