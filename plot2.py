@@ -7,8 +7,10 @@ Created on Thu May 28 11:40:18 2020
 
 import numpy as np
 import pandas as pd
-from funcoes import *
+from functions import *
 import matplotlib.pyplot as plt
+
+''' When running the plots, comment the print lines of matches function in functions.py '''
 
 indi = list(sc.index)
 

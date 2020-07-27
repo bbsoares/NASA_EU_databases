@@ -95,11 +95,11 @@ def match(sc_name, lim=5, list_of_parameters=None):
                 results.append(inx)
                 
                 if len(inx)==0:
-                    print('No match found in NASA.')
+#                    print('No match found in NASA.')
                     NA = na.loc[list(inx)]
                     
                 else:
-                    print('Match by name in NASA.')
+#                    print('Match by name in NASA.')
                     if list_of_parameters==None:
                         NA = na.loc[list(inx)]
                         
@@ -147,11 +147,11 @@ def match(sc_name, lim=5, list_of_parameters=None):
                 results.append(inx)
 
                 if len(inx)==0:
-                    print('No match found in EU.')
+#                    print('No match found in EU.')
                     EU = eu.loc[list(inx)]
                     
                 else:
-                    print('Match by name in EU.')
+#                    print('Match by name in EU.')
                     if list_of_parameters==None:
                         EU = eu.loc[list(inx)]
                     else:
@@ -164,7 +164,7 @@ def match(sc_name, lim=5, list_of_parameters=None):
                 else:
                     EU = eu.loc[list(ind),list_of_parameters]
 
-    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
+#    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
     return NA, EU
 
 #%%----------------------------------------------------------------------------
