@@ -9,8 +9,8 @@ Created on Sat Apr 18 12:22:47 2020
 #dictionary EU --> NASA
 dic = {'name':'pl_name','planet_status':'','mass':'pl_bmassj',
        'mass_error_min':'pl_bmassjerr2','mass_error_max':'pl_bmassjerr1',
-       'mass_sini':'pl_bmsinj','mass_sini_error_min':'pl_bmsinjerr2',
-       'mass_sini_error_max':'pl_bmsinjerr1',
+       'mass_sini':'pl_bmsinij','mass_sini_error_min':'pl_bmsinijerr2',
+       'mass_sini_error_max':'pl_bmsinijerr1',
        'radius':'pl_radj', 'radius_error_min':'pl_radjerr2', 
        'radius_error_max':'pl_radjerr1', 'orbital_period':'pl_orbper', 
        'orbital_period_error_min':'pl_orbpererr2', 'orbital_period_error_max':'pl_orbpererr1', 
