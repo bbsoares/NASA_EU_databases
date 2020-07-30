@@ -32,7 +32,7 @@ In order to make use of these codes, one needs to:
 
 **TUTORIAL: HOW TO USE THESE CODES**
 
-To get the NASA database in a pandas DataFrame as it is online, we must first load the ```pandas``` module and the use the ```get_data()``` function from ```nasa.py``` to download and store the data in a dictionary. Lastly, we load the dictionary in a pandas DataFrame
+I. To get the NASA database in a pandas DataFrame as it is online, we must first load the ```pandas``` module and the use the ```get_data()``` function from ```nasa.py``` to download and store the data in a dictionary. Lastly, we load the dictionary in a pandas DataFrame
 
 ```python
 import pandas as pd
@@ -42,13 +42,13 @@ from nasa import get_data
 na = pd.DataFrame.from_dict(get_data())
 ```
 
-The ```na``` database only has one column with all the information related to mass (and two columns for the upper and lower uncertainties, respectively), be it the mass or m_sini parameter. Therefore, if one wants to work with this information in a separate way (not mixing mass with m_sini information), they can use the NASA database from ```new_nasa.py```. This dataframe already has columns for the mass values and its uncertainties and columns for the m_sini values and its uncertainties. In this case, we just do
+II. The ```na``` database only has one column with all the information related to mass (and two columns for the upper and lower uncertainties, respectively), be it the mass or m_sini parameter. Therefore, if one wants to work with this information in a separate way (not mixing mass with m_sini information), they can use the NASA database from ```new_nasa.py```. This dataframe already has columns for the mass values and its uncertainties and columns for the m_sini values and its uncertainties. In this case, we just do
 
 ```python
 from new_nasa import new_na
 new_nasa_data = new_na()
 ```
-To load the EU database, we do
+III. To load the EU database, we do
 
 ```python
 from pyexoplaneteu import get_data as eudata
@@ -56,7 +56,7 @@ eu = pd.DataFrame.from_dict(eudata())
 ```
 Note that the function ```get_data()``` from the EU database was renamed as ```eudata()``` to avoid confusion with the ```get_data()``` function from NASA database.
 
-The main function to be used is the *match* function in the file *function.py*. The search for planetary information from both NASA and EU can be done through the corresponding SWEET-Cat star name or its coordinates (also in SWEET-Cat). This function return a dataframe for each NASA and EU found matches, therefore it should be assigned two variables (although it works all the same even if the variables aren't assigned).
+IV. The main function to be used is the *match* function in the file *function.py*. The search for planetary information from both NASA and EU can be done through the corresponding SWEET-Cat star name or its coordinates (also in SWEET-Cat). This function return a dataframe for each NASA and EU found matches, therefore it should be assigned two variables (although it works all the same even if the variables aren't assigned).
 
 ```pyhton
 # Search by name
