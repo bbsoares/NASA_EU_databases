@@ -5,8 +5,8 @@ Created on Sat Apr 18 12:22:47 2020
 @author: Barbara
 """
 
-
-#dictionary EU --> NASA
+# dictionary EU --> NASA
+# Note that there are parameters from EU that don't have any correspondence in NASA (and vice versa)
 dic = {'name':'pl_name','planet_status':'','mass':'pl_bmassj',
        'mass_error_min':'pl_bmassjerr2','mass_error_max':'pl_bmassjerr1',
        'mass_sini':'pl_bmsinij','mass_sini_error_min':'pl_bmsinijerr2',
