@@ -7,7 +7,7 @@ Online EU database (The Extrasolar Planets Encyclopaedia): http://exoplanet.eu/c
 **REQUIREMENTS**
 
 In order to make use of these codes, one needs to:
-- use Python 3
+- use python 3
 - have the pandas module (if not, see https://pandas.pydata.org/pandas-docs/stable/getting_started/install.html for two possible ways of installing it)
 - have the pyExoplaneteu module (if not, see https://pypi.org/project/pyExoplaneteu/ on how to do a quick installation)
 
