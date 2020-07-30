@@ -7,7 +7,7 @@ Online EU database (The Extrasolar Planets Encyclopaedia): http://exoplanet.eu/c
 **REQUIREMENTS**
 
 In order to make use of these codes, one needs to:
-- use Pyhton 3
+- use Python 3
 - have the pandas module (if not, see https://pandas.pydata.org/pandas-docs/stable/getting_started/install.html for two possible ways of installing it)
 - have the pyExoplaneteu module (if not, see https://pypi.org/project/pyExoplaneteu/ on how to do a quick installation)
 
@@ -15,7 +15,7 @@ In order to make use of these codes, one needs to:
 **FILES**
 
 - ***dictio.py***: python file which corresponds EU database parameters to NASA database parameters, when possible.
-- ***functions.py***: Main file. Pyhton file with functions to extract planetary information from SWEET-Cat, NASA and EU databases.
+- ***functions.py***: Main file. Python file with functions to extract planetary information from SWEET-Cat, NASA and EU databases.
   - *coor_sc2deg*: Converts coordinates of the SWEET-Cat star to degrees.
   - *match*: Given a SWEETCat star, verifies if it already exists in the NASA and EU database. Returns all or specified information.
   - *verify_database*: Given a SWEET-Cat star, uses the database column of SWEET-Cat to verify which database contains information of the star and its planets.
@@ -28,7 +28,7 @@ In order to make use of these codes, one needs to:
 
 **FOLDERS**
 - **Plots**: *plots.py* and *plot2.py* are two different ways to plot the planet's period as a function of the stellar metallicity, for planets with mass M < 30 M_Earth and a precision above 20%.
-- **Older versions codes**: *funcoes.py* is an older version of *function.py*, added with some unused functions.
+- **Older versions codes**: *funcoes.py* is an older version of *functions.py*, added with some unused functions.
 
 **TUTORIAL: HOW TO USE THESE CODES**
 
