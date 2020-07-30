@@ -18,7 +18,7 @@ sc2nasa=[]  # NASA
 sc2eu=[]  # EU
 
 for i in indi:
-    NA, EU = match(sc['name'][i])  # match all the SC stars with stars on NASA and EU
+    NA, EU = match(sc_name=sc['name'][i])  # match all the SC stars with stars on NASA and EU
     if len(NA)!=0:
         if len(NA)>1:  # If a star has more than on planet, the star index will appear repeated
             for k in NA.index:
@@ -27,7 +27,7 @@ for i in indi:
             sc2nasa.append([i,NA.index[0]])
     
     if len(EU)!=0:
-        if len(NA)>1:   # If a star has more than on planet, the star ind will appear repeated
+        if len(EU)>1:   # If a star has more than on planet, the star ind will appear repeated
             for j in EU.index:
                 sc2eu.append([i,j])
         else:     # Star only has one planet
@@ -51,7 +51,6 @@ nasa_msini = np.array(nasa_msini)
 SC_NA = np.concatenate((nasa_mass[:,0],nasa_msini[:,0]))
 NA_ind = np.concatenate((nasa_mass[:,1],nasa_msini[:,1]))
 
-
 eu_mass = []  # Mass for EU
 eu_msini = []   # Msini for EU
 
@@ -71,62 +70,56 @@ idx_eu = list(set(eu_mass[:,1])^set(eu_msini[:,1]))
 
 # Indexes of mass for EU
 # Choose mass and not msini but few of them are still minimum masses in EU
-mass_eu = np.intersect1d(eu_mass[:,1],idx_eu)  
+# Remove msini values
+msini_eu = np.intersect1d(eu_msini[:,1],idx_eu)  
  
 # Sort mass_eu as eu_mass[:,1] was, to not lose information
-m2 = np.array(sorted(list(mass_eu), key=list(eu_mass[:,1]).index)) 
-
+m2 = np.array(sorted(list(msini_eu), key=list(eu_msini[:,1]).index)) 
 
 # Remove the stars for which some mass indexes were removed
-df = pd.DataFrame(eu_mass)
+df = pd.DataFrame(eu_msini)
 df2 = df.loc[df[1].isin(m2)]
-eu_mass2 = np.array(df2)
+eu_msini2 = np.array(df2)
 
-EU_ind = np.concatenate((eu_mass2[:,1],eu_msini[:,1]))  # Indexes for EU
-SC_EU = np.concatenate((eu_mass2[:,0],eu_msini[:,0]))
+EU_ind = np.concatenate((eu_mass[:,1],eu_msini2[:,1]))  # Indexes for EU
+SC_EU = np.concatenate((eu_mass[:,0],eu_msini2[:,0]))
 
 # First indexes for NASA, second for EU
 sc_ind = np.concatenate((SC_NA,SC_EU))  # Indexes for SWEET-Cat
 
 ' Metallicity'
 feh = sc['feh'][sc_ind]
-#feh = sc['feh'][eu_msini[:,0]]
+#feh = sc['feh'][eu_msini2[:,0]]
 
 ' Period '
 per = pd.concat([na.loc[NA_ind,'pl_orbper'],eu.loc[EU_ind,'orbital_period']])
-#per = pd.concat([eu.loc[eu_mass2[:,1],'orbital_period'], eu.loc[eu_msini[:,1],'orbital_period']])
-#per = pd.concat([eu.loc[eu_msini[:,1],'orbital_period']])
+#per = pd.concat([eu.loc[eu_mass[:,1],'orbital_period'], eu.loc[eu_msini2[:,1],'orbital_period']])
+#per = pd.concat([eu.loc[eu_msini2[:,1],'orbital_period']])
 
 ' Mass '
-m = pd.concat([na['pl_bmassj'][nasa_mass[:,1]]*317.8, na['pl_bmsinij'][nasa_msini[:,1]]*317.8, eu['mass'][eu_mass2[:,1]]*317.8, eu['mass_sini'][eu_msini[:,1]]*317.8])
-#m = pd.concat([eu['mass'][eu_mass2[:,1]]*317.8, eu['mass_sini'][eu_msini[:,1]]*317.8])
-#m = pd.concat([eu['mass_sini'][eu_msini[:,1]]*317.8])
+m = pd.concat([na['pl_bmassj'][nasa_mass[:,1]]*317.8, na['pl_bmsinij'][nasa_msini[:,1]]*317.8, eu['mass'][eu_mass[:,1]]*317.8, eu['mass_sini'][eu_msini2[:,1]]*317.8])
+#m = pd.concat([eu['mass'][eu_mass[:,1]]*317.8, eu['mass_sini'][eu_msini2[:,1]]*317.8])
+#m = pd.concat([eu['mass_sini'][eu_msini2[:,1]]*317.8])
 
 
 '''PLOT'''
 ' SCATTER PLOT ' 
-x = feh
-y = per
-t = m
+
+x2 = feh
+y2 = per
+t2 = m
 fig, (ax1) = plt.subplots(1)
-map1 = ax1.scatter(x, y, c=t, cmap='viridis')
+map1 = ax1.scatter(x2, y2, c=t2, cmap='viridis')
 fig.colorbar(map1, ax=ax1, label = 'Mass')
 plt.xlabel('Stellar metallicity [Fe/H]')
 plt.ylabel('Period (days)')
 plt.yscale('log')
 plt.show()
 
+
+
 #' HISTOGRAM '
 #plt.hist(m,bins=30,orientation='horizontal',ec='black',alpha=0.7)
 #plt.ylabel('Mass')
 #plt.xlabel('Number os planets')
 #plt.show()
-
-
-## np.array(set(sc2na)^set(indi))
-## subset of planetary parameters dataframe SC-EU, SC-NASA
-# na.loc[nai]
-# eu.loc[eui]
-
-### Choose mass and not msini but few of them are still minimum masses in EU
-### Check parameters on EU and NASA on the online table
