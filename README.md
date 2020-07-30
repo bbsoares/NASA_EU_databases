@@ -54,7 +54,7 @@ new_nasa_data = new_na()
 ```
 **III. Load EU database**
 
-To load the EU database, we do
+To load the EU database in a pandas DataFrame, we do
 
 ```python
 from pyexoplaneteu import get_data as eudata
@@ -64,7 +64,7 @@ Note that the function ```get_data()``` from the EU database was renamed as ```e
 
 **IV. How to use functions from ```functions.py```**
 
-The main function to be used is the *match* function in the file *function.py*. The search for planetary information from both NASA and EU can be done through the corresponding SWEET-Cat star name or its coordinates (also in SWEET-Cat). This function return a dataframe for each NASA and EU found matches, therefore it should be assigned two variables (although it works all the same even if the variables aren't assigned).
+The main function to be used is the *match* function in the file ```functions.py```. The search for planetary information from both NASA and EU can be done through the corresponding SWEET-Cat star name or its coordinates (also in SWEET-Cat). This function return a dataframe for each NASA and EU found matches, therefore it should be assigned two variables (although it works all the same even if the variables aren't assigned).
 
 ```pyhton
 # Search by name
@@ -80,3 +80,10 @@ nasa_coor, eu_coor = match(r_asc='03 32 55.84', declin='-09 27 29.73')
 nasa_coor_par, eu_coor_par = match(r_asc='03 32 55.84', declin='-09 27 29.73', list_of_parameters=['mass','radius','orbital_period'])
 ```
 Similarly, to make use of the ```get_sc, coor_sc2deg``` and ```verify_database``` functions, one just needs to provide the SWEET-Cat star name and parameters required (when appliable).
+
+```python
+verify_database('gamma Cephei')
+coor_sc2deg('gamma Cephei')
+get_sc('gamma Cephei')
+get_sc('gamma Cephei', list_of_parameters=['Teff','logg','feh'])
+```
