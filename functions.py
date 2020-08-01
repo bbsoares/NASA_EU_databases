@@ -44,7 +44,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
     ''' Given the SWEETCat name of a star or its coordinates, 
     verifies if it already exists in the NASA and EU database.
     If so, returns all related information or the parameters 
-    specified. The checking is done for coordinates and 
+    specified. The checking is done by name or for coordinates and 
     within a certain limit.
     
     sc_name: star name as it is in SWEETCat (string)
@@ -57,7 +57,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
     r_asc: right ascension coordinate of the star (string)
     declin: declination coordinate of the star (string)
     
-    User can choose to give the star's name OR its coordinates, 
+    The user can choose to give the star's name OR its coordinates, 
     both as they are given in SWEETCat'''
     
     # Give the name of the star
@@ -69,11 +69,11 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
         else:
             pass
         
-        RAsc_arcsec, DECsc_arcsec = coor_sc2deg(sc_name)  # Coordinates are in degrees
+        RAsc_deg, DECsc_deg = coor_sc2deg(sc_name)  # Coordinates are in degrees
         
         # Convert coordinates from degrees to arcseconds
-        RAsc_arcsec=RAsc_arcsec*3600
-        DECsc_arcsec=DECsc_arcsec*3600
+        RAsc_arcsec=RAsc_deg*3600
+        DECsc_arcsec=DECsc_deg*3600
     
     # Give the SWEETCat coordinates of the star
     elif sc_name==None and r_asc!=None and declin!=None:
@@ -270,19 +270,19 @@ def get_sc(sc_name,list_of_parameters=None):
 def coor2deg():
     ''' Converts all RA and DEC SWEETCat coordinates to degrees '''
 
-    RAsc_arcsec = []
-    DECsc_arcsec = []
+    RAsc_deg = []
+    DECsc_deg = []
     
     for r in sc['ra']:
         ra_sc = (float(r[0:2])+float(r[3:5])/60.+float(r[6:])/3600.)*15.
-        RAsc_arcsec.append(ra_sc)
+        RAsc_deg.append(ra_sc)
         
     for d in sc['dec']:
         if d[0] == '-':
             dec_sc = float(d[0:3])-float(d[4:6])/60.-float(d[7:])/3600.
-            DECsc_arcsec.append(dec_sc)
+            DECsc_deg.append(dec_sc)
         else:
             dec_sc = float(d[0:3])+float(d[4:6])/60.+float(d[7:])/3600.
-            DECsc_arcsec.append(dec_sc)
+            DECsc_deg.append(dec_sc)
     
-    return np.array(RAsc_arcsec), np.array(DECsc_arcsec)
+    return np.array(RAsc_deg), np.array(DECsc_deg)
