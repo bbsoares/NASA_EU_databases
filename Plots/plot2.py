@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 ''' When running the plots, comment the print lines of matches function in functions.py '''
 
-indi = list(sc.index)
+indi = list(sc.index)  # Index for running through SWEET-Cat
 
 sc2nasa=[]  # NASA
 sc2eu=[]  # EU
@@ -41,10 +41,10 @@ nasa_mass=[]
 nasa_msini=[]
 for i in range(len(sc2nasa)): # Apply condition for mass and precision in NASA
     if (na['pl_bmassj'][sc2nasa[i,1]]<0.094399)&((na['pl_bmassjerr1'][sc2nasa[i,1]]<0.2*na['pl_bmassj'][sc2nasa[i,1]])&(na['pl_bmassjerr2'][sc2nasa[i,1]]<0.2*na['pl_bmassj'][sc2nasa[i,1]])):
-        nasa_mass.append([sc2nasa[i,0],sc2nasa[i,1]])
+        nasa_mass.append([sc2nasa[i,0],sc2nasa[i,1]]) # list[SC_index, NASA_index]
         
     if (na['pl_bmsinij'][sc2nasa[i,1]]<0.094399)&((na['pl_bmsinijerr1'][sc2nasa[i,1]]<0.2*na['pl_bmsinij'][sc2nasa[i,1]])&(na['pl_bmsinijerr2'][sc2nasa[i,1]]<0.2*na['pl_bmsinij'][sc2nasa[i,1]])):
-        nasa_msini.append([sc2nasa[i,0],sc2nasa[i,1]])
+        nasa_msini.append([sc2nasa[i,0],sc2nasa[i,1]])# list[SC_index, NASA_index]
 
 nasa_mass = np.array(nasa_mass)
 nasa_msini = np.array(nasa_msini)
@@ -73,7 +73,7 @@ idx_eu = list(set(eu_mass[:,1])^set(eu_msini[:,1]))
 # Remove msini values
 msini_eu = np.intersect1d(eu_msini[:,1],idx_eu)  
  
-# Sort mass_eu as eu_mass[:,1] was, to not lose information
+# Sort msini_eu as eu_msini[:,1] was, to not lose information
 m2 = np.array(sorted(list(msini_eu), key=list(eu_msini[:,1]).index)) 
 
 # Remove the stars for which some mass indexes were removed
@@ -88,18 +88,18 @@ SC_EU = np.concatenate((eu_mass[:,0],eu_msini2[:,0]))
 sc_ind = np.concatenate((SC_NA,SC_EU))  # Indexes for SWEET-Cat
 
 ' Metallicity'
-feh = sc['feh'][sc_ind]
-#feh = sc['feh'][eu_msini2[:,0]]
+#feh = sc['feh'][sc_ind]
+feh = sc['feh'][eu_msini2[:,0]]
 
 ' Period '
-per = pd.concat([na.loc[NA_ind,'pl_orbper'],eu.loc[EU_ind,'orbital_period']])
+#per = pd.concat([na.loc[NA_ind,'pl_orbper'],eu.loc[EU_ind,'orbital_period']])
 #per = pd.concat([eu.loc[eu_mass[:,1],'orbital_period'], eu.loc[eu_msini2[:,1],'orbital_period']])
-#per = pd.concat([eu.loc[eu_msini2[:,1],'orbital_period']])
+per = pd.concat([eu.loc[eu_msini2[:,1],'orbital_period']])
 
 ' Mass '
-m = pd.concat([na['pl_bmassj'][nasa_mass[:,1]]*317.8, na['pl_bmsinij'][nasa_msini[:,1]]*317.8, eu['mass'][eu_mass[:,1]]*317.8, eu['mass_sini'][eu_msini2[:,1]]*317.8])
+#m = pd.concat([na['pl_bmassj'][nasa_mass[:,1]]*317.8, na['pl_bmsinij'][nasa_msini[:,1]]*317.8, eu['mass'][eu_mass[:,1]]*317.8, eu['mass_sini'][eu_msini2[:,1]]*317.8])
 #m = pd.concat([eu['mass'][eu_mass[:,1]]*317.8, eu['mass_sini'][eu_msini2[:,1]]*317.8])
-#m = pd.concat([eu['mass_sini'][eu_msini2[:,1]]*317.8])
+m = pd.concat([eu['mass_sini'][eu_msini2[:,1]]*317.8])
 
 
 '''PLOT'''
@@ -110,10 +110,12 @@ y2 = per
 t2 = m
 fig, (ax1) = plt.subplots(1)
 map1 = ax1.scatter(x2, y2, c=t2, cmap='viridis')
-fig.colorbar(map1, ax=ax1, label = 'Mass')
+fig.colorbar(map1, ax=ax1, label = r'Mass ($M_{\oplus}$)')
 plt.xlabel('Stellar metallicity [Fe/H]')
 plt.ylabel('Period (days)')
 plt.yscale('log')
+plt.grid(True)
+plt.savefig('period-metal-mass.pdf',format='pdf')
 plt.show()
 
 
