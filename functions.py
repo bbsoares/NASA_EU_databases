@@ -131,11 +131,11 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
                 results.append(inx)
                 
                 if len(inx)==0:
-#                    print('No match found in NASA.')
+                    print('No match found in NASA.')
                     NA = na.loc[list(inx)]
                     
                 else:
-#                    print('Match by name in NASA.')
+                    print('Match by name in NASA.')
                     
                     # No list of parameters specified
                     if list_of_parameters==None:
@@ -153,7 +153,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
                         # Parameters that don't exist in NASA, only EU
                         no, = np.where(np.array(params)=='')
                         dont = [list_of_parameters[z] for z in no]
-#                        print('The following parameter(s) do(es) not exist in NASA:',str(dont))
+                        print('The following parameter(s) do(es) not exist in NASA:',str(dont))
                         
                         # Parameters common in EU and NASA
                         yes, = np.where(np.array(params)!='')
@@ -166,7 +166,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
 
                     
             else:  # Match found by coordinates!
-#                print('Match by coordinates in NASA.')
+                print('Match by coordinates in NASA.')
                 results.append(ind)
                 
                 if list_of_parameters==None:  # Return all information
@@ -184,7 +184,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
                     # Parameters that don't exist in NASA, only EU
                     no, = np.where(np.array(params)=='')
                     dont = [list_of_parameters[z] for z in no]
-#                    print('The following parameter(s) do(es) not exist in NASA:',str(dont))
+                    print('The following parameter(s) do(es) not exist in NASA:',str(dont))
                     
                     # Parameters common in EU and NASA
                     yes, = np.where(np.array(params)!='')
@@ -203,25 +203,25 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
                 results.append(inx)
 
                 if len(inx)==0:
-#                    print('No match found in EU.')
+                    print('No match found in EU.')
                     EU = eu.loc[list(inx)]
                     
                 else:
-#                    print('Match by name in EU.')
+                    print('Match by name in EU.')
                     if list_of_parameters==None:
                         EU = eu.loc[list(inx)]
                     else:
                         EU = eu.loc[list(inx),list_of_parameters]
             
             else:   # Match by coordinates found
-#                print('Match by coordinates in EU.')
+                print('Match by coordinates in EU.')
                 results.append(ind)
                 if list_of_parameters==None:
                     EU = eu.loc[list(ind)]
                 else:
                     EU = eu.loc[list(ind),list_of_parameters]
 
-#    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
+    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
     return NA, EU
 
 #%%----------------------------------------------------------------------------
