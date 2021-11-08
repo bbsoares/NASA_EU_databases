@@ -30,7 +30,7 @@ In order to make use of these codes, one needs to:
 
 **FOLDERS**
 - **Plots**: *plots.py* and *plot2.py* are two different ways to plot the planet's period as a function of the stellar metallicity, for planets with mass M < 30 M_Earth and a precision above 20%.
-# - **Older versions codes**: *funcoes.py* is an older version of *functions.py*, added with some unused functions.
+<!--  - **Older versions codes**: *funcoes.py* is an older version of *functions.py*, added with some unused functions. -->
 - **Legacy**: files and codes no longer in use due to improvements made or updates on the online databases.
 
 **TUTORIAL: HOW TO USE THESE CODES**
