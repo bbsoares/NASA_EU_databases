@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar  9 19:28:16 2020
-
 @author: Barbara
 """
 
@@ -13,9 +12,13 @@ import math
 import pprint
 import csv
 from collections import OrderedDict
+import pandas as pd
 
 # the link in the "Download Data" button
-download_link = 'https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets'
+
+# Old link, database was updated
+# download_link = 'https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets'
+download_link = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+ps&format=csv'
 
 # to get the directory where NASA Archive data will be stored
 def _create_data_dir():
@@ -107,7 +110,7 @@ class DataDict(dict):
         return p.text(self.__repr__())
 
     def __len__(self):
-        return len(self.__getitem__('pl_hostname'))
+        return len(self.__getitem__('hostname'))
 
     def columns(self):
         """ List the available columns """
@@ -115,7 +118,7 @@ class DataDict(dict):
 
     @property
     def size(self):
-        return len(self.__getitem__('pl_hostname'))
+        return len(self.__getitem__('hostname'))
 
     def to_numpy(self, inplace=True):
         """ 
@@ -193,4 +196,5 @@ def get_data():
 
 if __name__ == '__main__':
     data = get_data()
-    
+# else:
+#     data = get_data()
