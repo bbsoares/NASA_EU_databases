@@ -1,8 +1,10 @@
 # Planetary data from NASA and EU databases
 
-Online NASA database (NASA Exoplanet Archive): https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=planets
+Online NASA database (NASA Exoplanet Archive): https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+ps&format=csv
 
 Online EU database (The Extrasolar Planets Encyclopaedia): http://exoplanet.eu/catalog/
+
+Online SWEET-Cat database: http://sweetcat.iastro.pt/catalog/SWEETCAT_Dataframe.csv
 
 **REQUIREMENTS**
 
@@ -23,12 +25,13 @@ In order to make use of these codes, one needs to:
   - *coor2deg*: Converts all SWEET-Cat coordinates (right ascension and declination) to degrees.
 - ***nasa.py***: python file responsible for the downloading and storing of NASA database in a dictionary.
 - ***new_nasa.py***: python file modifying the NASA data base, adding 3 columns for the parameters m_sini and its upper and lower uncertainties.
-- ***WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb***: file with data from the SWEET-Cat database.
+# - ***WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb***: file with data from the SWEET-Cat database.
 
 
 **FOLDERS**
 - **Plots**: *plots.py* and *plot2.py* are two different ways to plot the planet's period as a function of the stellar metallicity, for planets with mass M < 30 M_Earth and a precision above 20%.
-- **Older versions codes**: *funcoes.py* is an older version of *functions.py*, added with some unused functions.
+# - **Older versions codes**: *funcoes.py* is an older version of *functions.py*, added with some unused functions.
+- **Legacy**: files and codes no longer in use due to improvements made or updates on the online databases.
 
 **TUTORIAL: HOW TO USE THESE CODES**
 
@@ -85,5 +88,5 @@ Similarly, to make use of the ```get_sc, coor_sc2deg``` and ```verify_database``
 verify_database('gamma Cephei')
 coor_sc2deg('gamma Cephei')
 get_sc('gamma Cephei')
-get_sc('gamma Cephei', list_of_parameters=['Teff','logg','feh'])
+get_sc('gamma Cephei', list_of_parameters=['Teff','Logg','[Fe/H]'])
 ```
