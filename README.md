@@ -25,7 +25,7 @@ In order to make use of these codes, one needs to:
   - *coor2deg*: Converts all SWEET-Cat coordinates (right ascension and declination) to degrees.
 - ***nasa.py***: python file responsible for the downloading and storing of NASA database in a dictionary.
 - ***new_nasa.py***: python file modifying the NASA data base, adding 3 columns for the parameters m_sini and its upper and lower uncertainties.
-# - ***WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb***: file with data from the SWEET-Cat database.
+% - ***WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb***: file with data from the SWEET-Cat database.
 
 
 **FOLDERS**
