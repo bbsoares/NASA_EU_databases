@@ -12,14 +12,31 @@ import matplotlib.pyplot as plt
 ## Mass < 30 Mt NASA + error < 20 %
 m_na, = np.where((na['pl_bmassj']<0.094399)&((na['pl_bmassjerr1']<0.2*na['pl_bmassj'])&(na['pl_bmassjerr2']<0.2*na['pl_bmassj'])))
 # Msini < 30 Mt NASA + error < 20 %
-mi_na, = np.where((na['pl_bmsinij']<0.094399)&((na['pl_bmsinijerr1']<0.2*na['pl_bmsinij'])&(na['pl_bmsinijerr2']<0.2*na['pl_bmsinij'])))
+mi_na, = np.where((na['pl_msinij']<0.094399)&((na['pl_msinijerr1']<0.2*na['pl_msinij'])&(na['pl_msinijerr2']<0.2*na['pl_msinij'])))
 #Mi_na = list(mi_na) # --> indices
 
-idx_na = np.concatenate([m_na,mi_na])
+
+idx_na = list(set(m_na)^set(mi_na)) # Remove repeated indexes
+mi_na2 = np.intersect1d(mi_na,idx_na)  # Mass except repeated indexes
+
+# Sort mass_eu as eu_mass[:,1] was, to not lose information
+mi_na2 = np.array(sorted(list(mi_na2), key=list(mi_na).index))
+
+idx_na = np.concatenate([m_na,mi_na2])
+# msini_notm = []
+# for j in mi_na:
+#     if j not in m_na:
+#         msini_notm.append(j)
+# for j in m_na:
+#     if j not in mi_na:
+#         msini_notm.append(j)
+# # m_na = sort(m_na)
+# msini_notm = np.array(msini_notm)
+# idx_na = np.concatenate([m_na,msini_notm])
 
 # Caracteristicas dos planetas com M<30 erro<20%
-R_NA = na.loc[idx_na,'ra']  # Coordinates RA
-D_NA = na.loc[idx_na,'dec']  # Coordinates DEC
+r_na = na.loc[idx_na,'ra']  # Coordinates RA
+d_na = na.loc[idx_na,'dec']  # Coordinates DEC
 
 
 ra,dec=coor2deg()  # Coordenadas do SC em graus
@@ -27,9 +44,9 @@ ra,dec=coor2deg()  # Coordenadas do SC em graus
 nomatch =[]
 ind_nasa_sc =[]
 for a in idx_na:
-    q, = np.where((abs(R_NA[a]-ra)<(5/3600)) & (abs(D_NA[a]-dec)<(5/3600)))
+    q, = np.where((abs(r_na[a]-ra)<(5/3600)) & (abs(d_na[a]-dec)<(5/3600)))
     if len(q)==0:
-        nomatch.append([na['pl_hostname'][a],a])
+        nomatch.append([na['hostname'][a],a])
         # save nomatch as list with index a
     else:
         # save list of the found indexes q (in SWEETCat) and respective index a
@@ -53,15 +70,15 @@ mi_eu2 = np.intersect1d(mi_eu,idx_eu)  # Mass except repeated indexes
 # Sort mass_eu as eu_mass[:,1] was, to not lose information
 mi_eu2 = np.array(sorted(list(mi_eu2), key=list(mi_eu).index))
 
-ra2,dec2=coor2deg()
+# ra2,dec2=coor2deg()
 
-R_EU = eu.loc[idx_eu,'ra'].astype(float) # Coordinates RA (EU has them in str)
-D_EU = eu.loc[idx_eu,'dec'].astype(float)  # Coordinates DEC (EU has them in str)
+r_eu = eu.loc[idx_eu,'ra'].astype(float) # Coordinates RA (EU has them in str)
+d_eu = eu.loc[idx_eu,'dec'].astype(float)  # Coordinates DEC (EU has them in str)
 
 nomatch2 =[]
 ind_eu_sc =[]
 for e in mi_eu2:
-    u, = np.where((abs(R_EU[e]-ra2)<(5/3600)) & (abs(D_EU[e]-dec2)<(5/3600)))
+    u, = np.where((abs(r_eu[e]-ra)<(5/3600)) & (abs(d_eu[e]-dec)<(5/3600)))
     if len(u)==0:
         nomatch2.append([eu['name'][e],e])
         # save nomatch as list with index e
@@ -76,22 +93,22 @@ ind_sc2=np.array(ind_eu_sc)[:,1]
 ind_sc=np.concatenate((ind_sc1,ind_sc2))
 
 'QUANTITIES'
-feh = sc['feh'][ind_sc]
+feh = sc['[Fe/H]'][ind_sc]
 
 per = pd.concat([na['pl_orbper'][ind_na],eu['orbital_period'][ind_eu]])
 #per = eu['orbital_period'][m4]
 
 m1 = np.intersect1d(ind_na,m_na) # mass NASA
-m2 = np.intersect1d(ind_na,mi_na) # mass sini NASA
+m2 = np.intersect1d(ind_na,mi_na2) # mass sini NASA
 m3 = np.intersect1d(ind_eu,m_eu) # mass EU
 m4 = np.intersect1d(ind_eu,mi_eu2) # mass sini EU
 
 # m = m1 + m2 + m3 + m4
-m = pd.concat([na['pl_bmassj'][m1]*317.8,na['pl_bmsinij'][m2]*317.8,eu['mass'][m3]*317.8,eu['mass_sini'][m4]*317.8])
+m = pd.concat([na['pl_bmassj'][m1]*317.8,na['pl_msinij'][m2]*317.8,eu['mass'][m3]*317.8,eu['mass_sini'][m4]*317.8])
 #m = eu['mass_sini'][m4]*317.8
 
 # Total mass --> all High Mass and Low Mass Planets
-MT = pd.concat([na['pl_bmassj']*317.8,na['pl_bmsinij']*317.8,eu['mass']*317.8,eu['mass_sini']*317.8])
+MT = pd.concat([na['pl_bmassj']*317.8,na['pl_msinij']*317.8,eu['mass']*317.8,eu['mass_sini']*317.8])
 
 'PLOT'
 x = feh
@@ -109,6 +126,7 @@ plt.show()
 ' HISTOGRAMA '
 ##A,B = np.histogram(m,bins=30)
 ##plt.hist(m,bins=np.logspace(np.log10(B[0]),np.log10(B[-1]),len(B)),orientation='horizontal',ec='black',alpha=0.9,zorder=0)
+plt.figure()
 plt.hist(m,bins=30,orientation='horizontal',ec='black',alpha=0.9)
 ##C,D = np.histogram(MT[~np.isnan(MT)],bins=30)
 ##plt.hist(MT[~np.isnan(MT)],bins=np.logspace(np.log10(D[0]),np.log10(D[-1]),len(D)),orientation='horizontal',ec='black',alpha=0.25)
