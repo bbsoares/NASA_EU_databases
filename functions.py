@@ -4,30 +4,92 @@ Created on Tue Mar 24 00:12:44 2020
 
 @author: Barbara
 """
+import os
 import numpy as np
 import pandas as pd
 from new_nasa import new_na
 from pyexoplaneteu import get_data as eudata
+from nasa import get_data as na_data
 from dictio import dic
+from urllib import request
+
 
 names_ = ['name', 'hd', 'ra', 'dec', 'V', 'Verr', 'p', 'perr',
                   'pflag', 'Teff', 'Tefferr', 'logg', 'logger',
                   'n1', 'n2', 'vt', 'vterr', 'feh', 'feherr', 'M', 'Merr',
                   'author', 'link', 'source', 'update', 'comment', 'database',
                   'n3']
-na = new_na()
+# na = new_na()
+na = pd.DataFrame.from_dict(na_data())
 eu = pd.DataFrame.from_dict(eudata())
-sc = pd.read_csv('WEBSITE_online_EU-NASA_full_database_clean_06-04-2020.rdb', sep='	', header=None, names=names_)
+# sc = pd.read_csv('WEBSITE_online_EU-NASA_full_database_clean.rdb', sep='	', header=None, names=names_)
 
+#%%
+
+link = 'http://sweetcat.iastro.pt/catalog/SWEETCAT_Dataframe.csv'
+
+# with request.urlopen(link) as response:
+#     data = response.read()
+
+# local_file = r"C:\Users\Barbara\Desktop\Tese\sweetcat.csv"
+# with open(local_file, 'wb') as f:
+#     f.write(data)
+
+# print(f'Saved NASA Archive data to {local_file}')
+
+# sc = pd.read_csv(r"C:\Users\Barbara\Desktop\Tese\sweetcat.csv")
+
+def _create_data_dir():
+    """ Create empty directory where sweetcat.csv will be stored """
+    home = os.path.expanduser("~")
+    directory = os.path.join(home, '.sweetcat')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+def _check_data_dir():
+    home = os.path.expanduser("~")
+    directory = os.path.join(home, '.sweetcat')
+    return os.path.exists(directory)
+
+
+def get_data_dir():
+    """ Return directory where sweetcat.csv is stored """
+    if not _check_data_dir():
+        _create_data_dir()
+        
+    home = os.path.expanduser("~")
+    return os.path.join(home, '.sweetcat')
+
+#########
+
+def download_data():
+    """ Download SWEET-Cat data and save it to `sweetcat.csv` """
+
+    with request.urlopen(link) as response:
+       data = response.read()
+
+    local_file = os.path.join(get_data_dir(), 'sweetcat.csv')
+    with open(local_file, 'wb') as f:
+        f.write(data)
+
+    print(f'Saved SWEET-Cat data to {local_file}')
+
+download_data()
+sc = pd.read_csv(r''+get_data_dir()+'\\sweetcat.csv')
+
+## First column are indexes from the online table
+sc = sc.drop(sc.columns[0],axis=1)
+
+#%%
 #-----------------------------------------------------------------
 
 def coor_sc2deg(star_name):
     ''' The user gives the name of the star as it is in the SWEETCat database.
         Converts coordinates of the star to degrees. '''
     
-    # Coordinates of SWEETCat in hh:mm:ss
-    ra_sc_ = (sc[(sc['name']==star_name)][['ra']]).values[0,0]
-    dec_sc_ = (sc[(sc['name']==star_name)][['dec']]).values[0,0]
+    # Coordinates of SWEETCat in hh:mm:ss/dd:mm:ss
+    ra_sc_ = (sc[(sc['Name']==star_name)][['RA']]).values[0,0]
+    dec_sc_ = (sc[(sc['Name']==star_name)][['DEC']]).values[0,0]
     
     # Change the coordinates from hh:mm:ss to degrees
     ra_sc = (float(ra_sc_[0:2])+float(ra_sc_[3:5])/60.+float(ra_sc_[6:])/3600.)*15.
@@ -64,7 +126,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
     if sc_name!=None and r_asc==None and declin==None:
         
         # Name is in SWEETCat?
-        if len(sc[sc['name']==sc_name])==0:
+        if len(sc[sc['Name']==sc_name])==0:
             raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
         else:
             pass
@@ -79,7 +141,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
     elif sc_name==None and r_asc!=None and declin!=None:
         
         # Coordinates are in SWEETCat?
-        if len(sc[sc['ra']==r_asc])==0 or len(sc[sc['dec']==declin])==0:
+        if len(sc[sc['RA']==r_asc])==0 or len(sc[sc['DEC']==declin])==0:
             raise Exception('These coordinates do not exist in SWEETCat. Please choose coordinates from SWEETCat.')
         else:
             pass
@@ -92,7 +154,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
         else:
             DECsc_arcsec = (float(declin[0:3])+float(declin[4:6])/60.+float(declin[7:])/3600.)*3600
     
-        sc_name = sc[(sc['ra']==r_asc)&(sc['dec']==declin)]['name'].values[0]
+        sc_name = sc[(sc['RA']==r_asc)&(sc['DEC']==declin)]['Name'].values[0]
     # Doesn't give name nor coordinates
     elif sc_name==None and ((r_asc!=None and declin==None) or (r_asc==None and declin!=None)):
         raise Exception('Please give BOTH right ascension and declination coordinates as they are in SWEETCat.')
@@ -127,7 +189,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
             if len(ind)==0:  # No match for coordinates!
                 
                 # If coordinates don't work, try checking by name
-                inx, = np.where(na['pl_hostname']==sc_name)
+                inx, = np.where(na['hostname']==sc_name)
                 results.append(inx)
                 
                 if len(inx)==0:
@@ -221,7 +283,7 @@ def match(sc_name=None, lim=5, list_of_parameters=None, r_asc=None, declin=None)
                 else:
                     EU = eu.loc[list(ind),list_of_parameters]
 
-    print('NASA index matches: '+str(results[0])+'  EU index matche(s) '+str(results[1])+'\n')
+    print('NASA index match(es): '+str(results[0])+'  EU index match(es) '+str(results[1])+'\n')
     return NA, EU
 
 #%%----------------------------------------------------------------------------
@@ -232,15 +294,15 @@ def verify_database(sc_name):
     contains information of the star and its planets. '''
 
     # Name is in SWEETCat?
-    if len(sc[sc['name']==sc_name])==0:
+    if len(sc[sc['Name']==sc_name])==0:
         raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
     else:
         pass
     
-    indx, = np.where(sc['name']==sc_name)[0]
+    indx, = np.where(sc['Name']==sc_name)[0]
     
     # Using database column
-    db = sc['database'][indx]
+    db = sc['Database'][indx]
     return db
 
 #%%----------------------------------------------------------------------------
@@ -251,7 +313,7 @@ def get_sc(sc_name,list_of_parameters=None):
     Alternatively, see names_ for parameters names in SWEETCat. '''
     
     # Name is in SWEETCat?
-    if len(sc[sc['name']==sc_name])==0:
+    if len(sc[sc['Name']==sc_name])==0:
         raise Exception('This name does not exist in SWEETCat. Please write a star present in SWEETCat.')
     else:
         pass
@@ -259,11 +321,11 @@ def get_sc(sc_name,list_of_parameters=None):
     # Get SWEET-Cat information
     # if there is a list of parameters
     if list_of_parameters==None:
-        SC = sc[sc['name']==sc_name]
+        SC = sc[sc['Name']==sc_name]
     
     # otherwise all information
     else:   
-        SC = sc[sc['name']==sc_name][list_of_parameters]
+        SC = sc[sc['Name']==sc_name][list_of_parameters]
     return SC
 
 #%%----------------------------------------------------------------------------
@@ -273,11 +335,11 @@ def coor2deg():
     RAsc_deg = []
     DECsc_deg = []
     
-    for r in sc['ra']:
+    for r in sc['RA']:
         ra_sc = (float(r[0:2])+float(r[3:5])/60.+float(r[6:])/3600.)*15.
         RAsc_deg.append(ra_sc)
         
-    for d in sc['dec']:
+    for d in sc['DEC']:
         if d[0] == '-':
             dec_sc = float(d[0:3])-float(d[4:6])/60.-float(d[7:])/3600.
             DECsc_deg.append(dec_sc)
